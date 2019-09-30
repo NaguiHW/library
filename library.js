@@ -6,7 +6,6 @@ class Book{
   }
 }
 
-// UI Class: Gandle UI Tasks
 class UI {
   static displayBooks(){
       const books = Store.getBooks();
@@ -36,7 +35,6 @@ class UI {
       const container = document.querySelector('.container');
       const form = document.querySelector('#book-form');
       container.insertBefore(div, form);
-      // Vanish in 3 Seconds
       setTimeout(() => document.querySelector('.alert').remove(), 4000);
   }
   static clearFields(){
@@ -45,4 +43,34 @@ class UI {
       document.querySelector('#pages').value = '';
       document.querySelector('#read').checked = null;
   }
+}
+
+class Store{
+    static getBooks() {
+        let books;
+        if(localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static addBook(book) {
+        const books = Store.getBooks();
+        books.push(book);
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook(title) {
+        const books = Store.getBooks();
+
+        books.forEach((book, index) => {
+            if(book.title === title){
+                books.splice(index, 1);
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
 }
