@@ -1,7 +1,7 @@
 class Book{
   constructor(title, author, pages, read){
     this.title = title;
-    this.autor = author;
+    this.author = author;
     this.pages = pages;
     this.read = read;
   }
@@ -13,17 +13,36 @@ class UI {
       books.forEach((book) => UI.addBookToList(book));
   }
   static addBookToList(book) {
-      const list = document.querySelector('#book-list');
-      const row = document.createElement('tr')
-      row.innerHTML = `
-          <td>${book.title}</td>
-          <td>${book.author}</td>
-          <td>${book.pages}</td>
-          <td>${book.read}</td>
-          <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>
-      `;
-      list.appendChild(row);
-      console.log(book);
+      let table = document.querySelector('#book-list');
+      let newRow = table.insertRow(-1);
+      let title = newRow.insertCell(-1);
+      title.innerHTML = book.title;
+      let author = newRow.insertCell(-1);
+      author.innerHTML = book.author;
+      let pages = newRow.insertCell(-1);
+      pages.innerHTML = book.pages;
+      let read = newRow.insertCell(-1);
+      let status = document.createElement('button');
+      if(book.read == true){
+        status.classList.add('btn', 'btn-success');
+        status.innerHTML = 'Yes';
+      } else{
+        status.classList.add('btn', 'btn-danger');
+        status.innerHTML = 'No';
+      }
+      read.appendChild(status);
+      let deleteBook = newRow.insertCell(-1);
+      let deleteButton = document.createElement('a')
+      deleteButton.innerHTML = 'X';
+      deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete');
+      deleteBook.appendChild(deleteButton);
+
+      status.addEventListener('click', () => {
+        changeStatus(status);
+      });
+      deleteButton.addEventListener('click', () => {
+        deleteBookFromLocalstorage(deleteButton);
+      });
   }
   static deleteBook(el) {
       if(el.classList.contains('delete')) {
@@ -47,6 +66,33 @@ class UI {
   }
 }
 
+function changeStatus(status){
+  let index = status.parentElement.parentElement.rowIndex;
+  let readAttribute = JSON.parse(localStorage.books);
+  if(readAttribute[index - 1].read == true){
+    readAttribute[index - 1].read = false;
+    status.classList.remove('btn-success');
+    status.classList.add('btn-danger');
+    status.innerHTML = 'No';
+  } else{
+    readAttribute[index - 1].read = true
+    status.classList.remove('btn-danger');
+    status.classList.add('btn-success');
+    status.innerHTML = 'Yes';
+  }
+  localStorage.setItem('books', JSON.stringify(readAttribute))
+}
+
+function deleteBookFromLocalstorage(book){
+  let index = book.parentElement.parentElement.rowIndex;
+  let delBook = JSON.parse(localStorage.books);
+  delBook.splice(index - 1, 1);
+  localStorage.setItem('books', JSON.stringify(delBook));
+  let table = document.querySelector('#book-list');
+  table.deleteRow(index - 1);
+  UI.showAlert('Book Removed', 'info');
+}
+
 class Store{
     static getBooks() {
         let books;
@@ -63,47 +109,25 @@ class Store{
         books.push(book);
         localStorage.setItem('books', JSON.stringify(books));
     }
-
-    static removeBook(title) {
-        const books = Store.getBooks();
-
-        books.forEach((book, index) => {
-            if(book.title === title){
-                books.splice(index, 1);
-            }
-        });
-
-        localStorage.setItem('books', JSON.stringify(books));
-    }
 }
 
-// Event: Display Books
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
-// Event: Add a Book
 document.querySelector('#book-form').addEventListener('submit', (e) => {
-    //Prevent actual sumbit
     e.preventDefault();
     
-    //Get form values
     const title = document.querySelector('#title').value;
     const author = document.querySelector('#author').value;
     const pages = document.querySelector('#pages').value;
     const read = document.querySelector('#read').checked ? 'Yes':'No';
-    //Valiate
     if(title === '' || author === '' || pages === '' ){
         UI.showAlert('Please fill in all fields', 'danger');
     } else{
-        // Instatiate book
         const book = new Book(title, author, pages, read);
     
-        //Add Book to UI
         UI.addBookToList(book);
-        //Add Book to Store
         Store.addBook(book);
         
-        //Show Success Message
         UI.showAlert('Book Added', 'success');
-        //Clear Fields
         UI.clearFields();
     }
 });
