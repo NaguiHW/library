@@ -73,13 +73,13 @@ class UI {
 function changeStatus(status) {
   const index = status.parentElement.parentElement.rowIndex;
   const readAttribute = JSON.parse(localStorage.books);
-  if(readAttribute[index - 1].read == true){
+  if (readAttribute[index - 1].read === true) {
     readAttribute[index - 1].read = false;
     status.classList.remove('btn-success');
     status.classList.add('btn-danger');
     status.innerHTML = 'No';
   } else {
-    readAttribute[index - 1].read = true
+    readAttribute[index - 1].read = true;
     status.classList.remove('btn-danger');
     status.classList.add('btn-success');
     status.innerHTML = 'Yes';
@@ -100,7 +100,7 @@ function deleteBookFromLocalstorage(book) {
 class Store {
   static getBooks() {
     let books;
-    if(localStorage.getItem('books') === null) {
+    if (localStorage.getItem('books') === null) {
       books = [];
     } else {
       books = JSON.parse(localStorage.getItem('books'));
@@ -118,19 +118,16 @@ class Store {
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
 document.querySelector('#book-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  
   const title = document.querySelector('#title').value;
   const author = document.querySelector('#author').value;
   const pages = document.querySelector('#pages').value;
-  const read = document.querySelector('#read').checked ? 'Yes':'No';
-  if(title === '' || author === '' || pages === '' ){
+  const read = document.querySelector('#read').checked;
+  if (title === '' || author === '' || pages === '' ) {
     UI.showAlert('Please fill in all fields', 'danger');
-  } else{
+  } else {
     const book = new Book(title, author, pages, read);
-
     UI.addBookToList(book);
     Store.addBook(book);
-    
     UI.showAlert('Book Added', 'success');
     UI.clearFields();
   }
