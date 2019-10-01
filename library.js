@@ -10,21 +10,21 @@ class Book {
 class UI {
   static displayBooks() {
     const books = Store.getBooks();
-    books.forEach( book => UI.addBookToList(book));
+    books.forEach(book => UI.addBookToList(book));
   }
 
   static addBookToList(book) {
-    let table = document.querySelector('#book-list');
-    let newRow = table.insertRow(-1);
-    let title = newRow.insertCell(-1);
+    const table = document.querySelector('#book-list');
+    const newRow = table.insertRow(-1);
+    const title = newRow.insertCell(-1);
     title.innerHTML = book.title;
-    let author = newRow.insertCell(-1);
+    const author = newRow.insertCell(-1);
     author.innerHTML = book.author;
-    let pages = newRow.insertCell(-1);
+    const pages = newRow.insertCell(-1);
     pages.innerHTML = book.pages;
-    let read = newRow.insertCell(-1);
-    let status = document.createElement('button');
-    if(book.read === true) {
+    const read = newRow.insertCell(-1);
+    const status = document.createElement('button');
+    if (book.read === true) {
       status.classList.add('btn', 'btn-success');
       status.innerHTML = 'Yes';
     } else {
@@ -32,8 +32,8 @@ class UI {
       status.innerHTML = 'No';
     }
     read.appendChild(status);
-    let deleteBook = newRow.insertCell(-1);
-    let deleteButton = document.createElement('a')
+    const deleteBook = newRow.insertCell(-1);
+    const deleteButton = document.createElement('a');
     deleteButton.innerHTML = 'X';
     deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete');
     deleteBook.appendChild(deleteButton);
@@ -45,11 +45,13 @@ class UI {
       deleteBookFromLocalstorage(deleteButton);
     });
   }
+
   static deleteBook(el) {
-    if(el.classList.contains('delete')) {
-        el.parentElement.parentElement.remove();
+    if (el.classList.contains('delete')) {
+      el.parentElement.parentElement.remove();
     }
   }
+
   static showAlert(message, className) {
     const div = document.createElement('div');
     div.className = `alert alert-${className}`;
@@ -59,7 +61,8 @@ class UI {
     container.insertBefore(div, form);
     setTimeout(() => document.querySelector('.alert').remove(), 4000);
   }
-  static clearFields(){
+
+  static clearFields() {
     document.querySelector('#title').value = '';
     document.querySelector('#author').value = '';
     document.querySelector('#pages').value = '';
@@ -67,34 +70,34 @@ class UI {
   }
 }
 
-function changeStatus(status){
-  let index = status.parentElement.parentElement.rowIndex;
-  let readAttribute = JSON.parse(localStorage.books);
+function changeStatus(status) {
+  const index = status.parentElement.parentElement.rowIndex;
+  const readAttribute = JSON.parse(localStorage.books);
   if(readAttribute[index - 1].read == true){
     readAttribute[index - 1].read = false;
     status.classList.remove('btn-success');
     status.classList.add('btn-danger');
     status.innerHTML = 'No';
-  } else{
+  } else {
     readAttribute[index - 1].read = true
     status.classList.remove('btn-danger');
     status.classList.add('btn-success');
     status.innerHTML = 'Yes';
   }
-  localStorage.setItem('books', JSON.stringify(readAttribute))
+  localStorage.setItem('books', JSON.stringify(readAttribute));
 }
 
-function deleteBookFromLocalstorage(book){
-  let index = book.parentElement.parentElement.rowIndex;
-  let delBook = JSON.parse(localStorage.books);
+function deleteBookFromLocalstorage(book) {
+  const index = book.parentElement.parentElement.rowIndex;
+  const delBook = JSON.parse(localStorage.books);
   delBook.splice(index - 1, 1);
   localStorage.setItem('books', JSON.stringify(delBook));
-  let table = document.querySelector('#book-list');
+  const table = document.querySelector('#book-list');
   table.deleteRow(index - 1);
   UI.showAlert('Book Removed', 'info');
 }
 
-class Store{
+class Store {
   static getBooks() {
     let books;
     if(localStorage.getItem('books') === null) {
