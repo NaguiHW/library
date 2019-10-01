@@ -24,16 +24,6 @@ function changeStatus(status) {
   localStorage.setItem('books', JSON.stringify(readAttribute));
 }
 
-function deleteBookFromLocalstorage(book) {
-  const index = book.parentElement.parentElement.rowIndex;
-  const delBook = JSON.parse(localStorage.books);
-  delBook.splice(index - 1, 1);
-  localStorage.setItem('books', JSON.stringify(delBook));
-  const table = document.querySelector('#book-list');
-  table.deleteRow(index - 1);
-  UI.showAlert('Book Removed', 'info');
-}
-
 class Store {
   static getBooks() {
     let books;
@@ -113,6 +103,16 @@ class UI {
     document.querySelector('#pages').value = '';
     document.querySelector('#read').checked = null;
   }
+}
+
+function deleteBookFromLocalstorage(book) {
+  const index = book.parentElement.parentElement.rowIndex;
+  const delBook = JSON.parse(localStorage.books);
+  delBook.splice(index - 1, 1);
+  localStorage.setItem('books', JSON.stringify(delBook));
+  const table = document.querySelector('#book-list');
+  table.deleteRow(index - 1);
+  UI.showAlert('Book Removed', 'info');
 }
 
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
